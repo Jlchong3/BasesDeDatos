@@ -12,9 +12,9 @@ def inputValido(opciones):
 def imprimirTabla(cursor, tabla):
     cursor.execute(f"Select * from {tabla}")
     rows = cursor.fetchall()
-    columns = [i[0] for i in cursor.description]  # Extracting column names from the cursor
+    columns = [i[0] for i in cursor.description]
     df = pd.DataFrame(rows, columns=columns)
-    print(df)
+    print(df.to_string(index=False))
     del df
 
 conn = sql.connect(
@@ -43,7 +43,4 @@ Opciones:
             imprimirTabla(cursor, "sorteo")
         case _:
             print("Sesión terminada con exito.")
-
-
-
 
