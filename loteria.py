@@ -19,3 +19,4 @@ def create_connection(host_name, user_name, user_password, db_name, db_port):
 
 
 conexion = create_connection("basesloteria.mysql.database.azure.com", "administrador", "@basesloteriaN", "loterianacional", 3306) 
+hola="hola"
