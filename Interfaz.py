@@ -20,8 +20,8 @@ def imprimirTabla(cursor, tabla):
 conn = sql.connect(
     host = "localhost",
     user = "root",
-    password = "",
-    database = ""
+    password = "MARiu1234.,",
+    database = "LoteriaNacional"
 )
 
 cursor = conn.cursor()
@@ -31,16 +31,16 @@ opcion = ""
 while opcion != "3":
     print('''
 Opciones:
-  1. Tabla de Ganadores
-  2. Table de Sorteos
+  1. Tabla de Sucursales
+  2. Table de Ventas
   3. salir
     ''')
     opcion = inputValido(opciones)
     match opcion:
         case "1":
-            imprimirTabla(cursor, "ganador")
+            imprimirTabla(cursor, "sucursal")
         case "2":
-            imprimirTabla(cursor, "sorteo")
+            imprimirTabla(cursor, "venta")
         case _:
             print("Sesión terminada con exito.")
 
