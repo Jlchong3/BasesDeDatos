@@ -4,9 +4,9 @@ import mysql.connector as sql
 #funciones
 
 conn = sql.connect(
-    host = "localhost",
-    user = "root",
-    password = "MARiu1234.,",
+    host = "basesloteria.mysql.database.azure.com",
+    user = "administrador",
+    password = "@basesloteriaN",
     database = "LoteriaNacional",
     autocommit=True
 )
@@ -142,6 +142,92 @@ def consultaRegistro(cursor):
     for resultado in resultados:
         print(resultado)
 
+def EliminarRegistro(cursor):
+    # Pedir al usuario que seleccione una tabla
+    numero_tabla = int(input("Ingrese el número de la tabla en la que desea agregar un registro: "))
+
+    # Obtener el nombre de la tabla seleccionada
+    if 1 <= numero_tabla <= len(tablas):
+        tabla_seleccionada = tablas[numero_tabla - 1]
+    else:
+        print("Número de tabla no válido.")
+        return
+    imprimirTabla(cursor, tabla_seleccionada)
+    # Obtener información sobre las columnas de la tabla
+    cursor.execute(f"DESCRIBE {tabla_seleccionada}")
+    columnas_info = cursor.fetchall()
+
+    sentencia=f"DELETE from {tabla_seleccionada} WHERE "
+    for PK in ObtenerPK(cursor,tabla_seleccionada):
+        valor=int(input(f"Ingrese el valor de {PK}: "))
+        if ObtenerPK(cursor,tabla_seleccionada).index(PK)==len(ObtenerPK(cursor,tabla_seleccionada))-1:
+            sentencia+=f"{PK}={valor}"
+        else:
+            sentencia+=f"{PK}={valor} and "
+    cursor.execute(sentencia)
+    print("Registro borrado!")
+
+    # if tabla_seleccionada=="billete":
+    #     idBillete=int(input("Ingrese el idBillete: "))
+    #     idSorteo=int(input("Ingrese el idSorteo: "))
+    #     idCategoria=int(input("Ingrese el idCategoria: "))
+    #     cursor.execute(f"DELETE from {tabla_seleccionada} WHERE idBillete={idBillete} and idSorteo={idSorteo} and idCategoria={idCategoria}")
+   
+    # elif tabla_seleccionada=="categoria":
+    #     idCategoria=int(input("Ingrese el idCategoria: "))
+    #     cursor.execute(f"DELETE from {tabla_seleccionada} where idCategoria={idCategoria}")
+
+
+    # elif tabla_seleccionada=="cuentavirtual":
+    #      cedula=int(input("Ingrese la cedula: "))
+    #      cursor.execute(f"DELETE from {tabla_seleccionada} where cedula={cedula}")
+
+
+    # elif tabla_seleccionada=="detallepremio":
+    #     idPremio=int(input("Ingrese el idPremio: "))
+    #     idCategoria=int(input("Ingrese el idCategoria: "))
+    #     cursor.execute(f"DELETE from {tabla_seleccionada} WHERE idPremio={idPremio} and idCategoria={idCategoria}")
+
+
+    # elif tabla_seleccionada=="ganador":
+    #     cedula=int(input("Ingrese la cedula: "))
+    #     idBillete=int(input("Ingrese el idBillete: "))
+    #     cursor.execute(f"DELETE from {tabla_seleccionada} WHERE cedula={cedula} and idBillete={idBillete}")
+
+
+    # elif tabla_seleccionada=="loteria":
+    #     idCategoria=int(input("Ingrese el idCategoria: "))
+    #     cursor.execute(f"DELETE from {tabla_seleccionada} where idCategoria={idCategoria}")
+   
+    # elif tabla_seleccionada=="pozo":
+    #     idCategoria=int(input("Ingrese el idCategoria: "))
+    #     cursor.execute(f"DELETE from {tabla_seleccionada} where idCategoria={idCategoria}")
+
+
+    # elif tabla_seleccionada=="premio":
+    #     idPremio=int(input("Ingrese el idPremio: "))
+    #     cursor.execute(f"DELETE from {tabla_seleccionada} WHERE idPremio={idPremio}")
+
+
+    # elif tabla_seleccionada=="sorteo":
+    #     idSorteo=int(input("Ingrese el idSorteo: "))
+    #     cursor.execute(f"DELETE from {tabla_seleccionada} WHERE idSorteo={idSorteo}")
+
+
+    # elif tabla_seleccionada=="sucursal":
+    #     idSucursal=int(input("Ingrese el idSucursal: "))
+
+def ObtenerPK(cursor,tabla):
+        try:
+        # Obtiene la información sobre la clave primaria de la tabla
+            cursor.execute(f"SHOW KEYS FROM {tabla} WHERE Key_name = 'PRIMARY'")
+            columnas_clave_primaria = [columna[4] for columna in cursor.fetchall()]
+            return columnas_clave_primaria
+        
+        except Exception as e:
+            print(f"Error al obtener las columnas de la clave primaria: {e}")
+
+
 #MOSTRAR TABLAS DE LA BASE ---------------------------------------------------
 cursor.execute("SHOW TABLES")
 tablas = [tabla[0] for tabla in cursor]
@@ -166,7 +252,7 @@ Opciones:
         case "1":
             anadirRegistro(cursor)
         case "2":
-            consultaRegistro(cursor)
+            EliminarRegistro(cursor)
         case "3":
             print("Editar ") 
         case "4":
