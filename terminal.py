@@ -108,7 +108,7 @@ def anadirRegistro(cursor):
 
 def consultaRegistro(cursor):
 # Pedir al usuario que seleccione una tabla
-    numero_tabla = int(input("\n Ingrese el número de la tabla que desea abrir: "))
+    numero_tabla = int(input("\nIngrese el número de la tabla que desea abrir: "))
 
     # Verificar si el número de tabla es válido
     if 1 <= numero_tabla <= len(tablas):
@@ -122,7 +122,7 @@ def consultaRegistro(cursor):
     columnas_info = cursor.fetchall()
 
     # Mostrar al usuario las columnas disponibles
-    print("\n Columnas disponibles:")
+    print("\nColumnas disponibles:")
     for columna_info in columnas_info:
         print(columna_info[0])
 
@@ -130,7 +130,7 @@ def consultaRegistro(cursor):
     consulta = f"SELECT * FROM {tabla_seleccionada} WHERE {columnas_info[0][0]} = %s"
 
     # Pedir al usuario que ingrese el valor de la clave primaria
-    valor_clave_primaria = input(f"\n Ingrese el valor de la clave primaria para la columna {columnas_info[0][0]}: ")
+    valor_clave_primaria = input(f"\nIngrese el valor de la clave primaria para la columna {columnas_info[0][0]}: ")
 
     # Ejecutar la consulta
     cursor.execute(consulta, (valor_clave_primaria,))
@@ -139,9 +139,12 @@ def consultaRegistro(cursor):
     resultados = cursor.fetchall()
 
     # Mostrar los resultados
-    print("Resultados:")
-    for resultado in resultados:
-        print(resultado)
+    if len(resultados) == 0:
+        print("-- No se encontro regristro --")
+    else:
+        print("Resultados:")
+        for resultado in resultados:
+            print(resultado)
 
 #MOSTRAR TABLAS DE LA BASE ---------------------------------------------------
 cursor.execute("SHOW TABLES")
