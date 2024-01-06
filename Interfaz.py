@@ -3,8 +3,15 @@ import mysql.connector as sql
 
 #funciones
 
+conn = sql.connect(
+    host = "localhost",
+    user = "root",
+    password = "MARiu1234.,",
+    database = "LoteriaNacional",
+    autocommit=True
+)
 
-
+cursor = conn.cursor()
 
 def inputValido(opciones):
     opcion = input("Eliga una opción:")
@@ -22,100 +29,118 @@ def imprimirTabla(cursor, tabla):
 
 
 def anadirRegistro(cursor):
-    # Pedir al usuario que seleccione una tabla
-    numero_tabla = int(input("\n Ingrese el número de la tabla que desea abrir: \n"))
+# Pedir al usuario que seleccione una tabla
+    numero_tabla = int(input("Ingrese el número de la tabla en la que desea agregar un registro: "))
 
-    # Verificar si el número de tabla es válido
+    # Obtener el nombre de la tabla seleccionada
     if 1 <= numero_tabla <= len(tablas):
-        # Obtener el nombre de la tabla seleccionada
         tabla_seleccionada = tablas[numero_tabla - 1]
-
-        # Mostrar información de la tabla seleccionada
-        print(f"Abriendo la tabla: {tabla_seleccionada}")
-        imprimirTabla(cursor, f"{tabla_seleccionada}")
-
     else:
         print("Número de tabla no válido.")
+        return
+    imprimirTabla(cursor, tabla_seleccionada)
+    # Obtener información sobre las columnas de la tabla
+    cursor.execute(f"DESCRIBE {tabla_seleccionada}")
+    columnas_info = cursor.fetchall()
 
-    #MOSTRAR COLUMNAS Y CLAVES PRIMARIAS O FORANEAS 
-    consulta_ultimo_valor = f"SELECT MAX(col1) FROM {tabla_seleccionada}"
-    cursor.execute(consulta_ultimo_valor)
-    ultimo_valor_primaria = cursor.fetchone()[0]
+    # Obtener los nombres de las columnas
+    nombres_columnas = [columna[0] for columna in columnas_info]
 
-    # Verificar si hay algún valor previo y asignar el nuevo valor
-    nuevo_valor_primaria = 1 if ultimo_valor_primaria is None else ultimo_valor_primaria + 1
+    # Crear un diccionario para almacenar los valores del nuevo registro
+    nuevo_registro = {}
 
-    # Verificar la existencia de la clave foránea en su respectiva tabla
-    consulta_verificar_foranea = f"SELECT * FROM tabla_foranea WHERE col_foranea = {col2}"
-    cursor.execute(consulta_verificar_foranea)
-    if cursor.fetchone() is None:
-        raise ValueError("La clave foránea no existe en la tabla_foranea.")
-    
-    # Consulta SQL para insertar el nuevo registro
-    consulta_insertar = f"INSERT INTO {tabla_seleccionada} (col1, col2, col3, col4) VALUES (%s, %s, %s, %s)"
+    # Pedir al usuario que ingrese los valores para cada columna
+    for nombre_columna in nombres_columnas:
+        valor = input(f"Ingrese el valor para la columna {nombre_columna}: ")
 
-    # Datos para insertar
-    datos_insertar = (nuevo_valor_primaria, col2, col3, col4)
+        # Validar si la columna es clave primaria o foránea
+        if "PRI" in [tipo[3] for tipo in columnas_info if tipo[0] == nombre_columna]:
+            # Verificar si el valor ya existe en la tabla (clave primaria no puede repetirse)
+            cursor.execute(f"SELECT COUNT(*) FROM {tabla_seleccionada} WHERE {nombre_columna} = %s", (valor,))
+            if cursor.fetchone()[0] > 0:
+                print(f"Error: El valor {valor} ya existe en la columna {nombre_columna}.")
+                return
+            
 
-    # Ejecutar la consulta SQL para insertar el nuevo registro
-    cursor.execute(consulta_insertar, datos_insertar)
+        elif "MUL" in [tipo[3] for tipo in columnas_info if tipo[0] == nombre_columna]:
 
-    conn.commit()
 
-    del df
+            # Verificar si el valor existe en la tabla referenciada (clave foránea)
+
+            numero_subtabla = int(input(f"Ingrese el nombre de la tabla referenciada para la columna {nombre_columna}: "))
+
+            # Obtener el nombre de la tabla seleccionada
+            if 1 <= numero_subtabla <= len(tablas):
+                tabla_subseleccionada = tablas[numero_subtabla - 1]
+            else:
+                print("Número de tabla no válido.")
+                return
+
+            # Obtener información sobre las columnas de la tabla
+            cursor.execute(f"DESCRIBE {tabla_subseleccionada}")
+            columnas_info = cursor.fetchall()
+
+            # Construir la consulta SQL
+            consulta = f"SELECT * FROM {tabla_subseleccionada} WHERE {columnas_info[0][0]} = %s"
+
+            # Ejecutar la consulta
+            cursor.execute(consulta, (valor,))
+
+            # Obtener los resultados
+            resultados = cursor.fetchall()
+            if len(resultados) == 0:
+                print(f"Error: El valor {valor} no existe en la tabla referenciada para la columna {nombre_columna}.")
+                return
+
+        nuevo_registro[nombre_columna] = valor
+
+    # Construir la consulta SQL para insertar el nuevo registro
+    consulta = f"INSERT INTO {tabla_seleccionada} ({', '.join(nombres_columnas)}) VALUES ({', '.join(['%s'] * len(nombres_columnas))})"
+
+    # Ejecutar la consulta SQL
+    try:
+        cursor.execute(consulta, tuple(nuevo_registro.values()))
+        conn.commit()
+        print("Registro agregado correctamente.")
+    except sql.Error as err:
+        print(f"Error al agregar el registro: {err}")
 
 def consultaRegistro(cursor):
-    # Pedir al usuario que seleccione una tabla
-    numero_tabla = int(input("\n Ingrese el número de la tabla que desea abrir: \n"))
+# Pedir al usuario que seleccione una tabla
+    numero_tabla = int(input("\n Ingrese el número de la tabla que desea abrir: "))
 
     # Verificar si el número de tabla es válido
     if 1 <= numero_tabla <= len(tablas):
         # Obtener el nombre de la tabla seleccionada
         tabla_seleccionada = tablas[numero_tabla - 1]
-
-        # Mostrar información de la tabla seleccionada
-        print(f"Abriendo la tabla: {tabla_seleccionada}")
-        imprimirTabla(cursor, f"{tabla_seleccionada}")
-
     else:
         print("Número de tabla no válido.")
 
-        # Obtén la información de la tabla para determinar la columna de la clave primaria
-        cursor.execute(f"DESCRIBE numero_tabla")
-        filas = cursor.fetchall()
-        columna_clave_primaria = 0
+    # Obtener información sobre las columnas de la tabla
+    cursor.execute(f"DESCRIBE {tabla_seleccionada}")
+    columnas_info = cursor.fetchall()
 
-        for fila in filas:
-            if 'PRI' in fila:
-                columna_clave_primaria = fila[0]
-                break
+    # Mostrar al usuario las columnas disponibles
+    print("\n Columnas disponibles:")
+    for columna_info in columnas_info:
+        print(columna_info[0])
 
-        if columna_clave_primaria is None:
-            raise ValueError("No se encontró una columna de clave primaria en la tabla.")
+    # Construir la consulta SQL
+    consulta = f"SELECT * FROM {tabla_seleccionada} WHERE {columnas_info[0][0]} = %s"
 
-        # Construye la consulta SQL utilizando la columna de la clave primaria
-        consulta = f"SELECT * FROM {tabla} WHERE {columna_clave_primaria} = %s"
+    # Pedir al usuario que ingrese el valor de la clave primaria
+    valor_clave_primaria = input(f"\n Ingrese el valor de la clave primaria para la columna {columnas_info[0][0]}: ")
 
-        # Ejecuta la consulta
-        cursor.execute(consulta, (clave_primaria_valor,))
+    # Ejecutar la consulta
+    cursor.execute(consulta, (valor_clave_primaria,))
 
-        resultado = cursor.fetchone()
+    # Obtener los resultados
+    resultados = cursor.fetchall()
+
+    # Mostrar los resultados
+    print("Resultados:")
+    for resultado in resultados:
         print(resultado)
-
-
-        del df
-
-conn = sql.connect(
-    host = "localhost",
-    user = "root",
-    password = "MARiu1234.,",
-    database = "LoteriaNacional"
-)
-
-cursor = conn.cursor()
-
-
-
 
 #MOSTRAR TABLAS DE LA BASE ---------------------------------------------------
 cursor.execute("SHOW TABLES")
@@ -170,3 +195,4 @@ Opciones:
         case _:
             print("Sesión terminada con exito.")
 
+cursor.close()
