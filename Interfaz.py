@@ -143,79 +143,33 @@ def consultaRegistro(cursor):
         print(resultado)
 
 def EliminarRegistro(cursor):
+    try: 
     # Pedir al usuario que seleccione una tabla
-    numero_tabla = int(input("Ingrese el número de la tabla en la que desea agregar un registro: "))
+        numero_tabla = int(input("Ingrese el número de la tabla en la que desea borrar un registro: "))
 
     # Obtener el nombre de la tabla seleccionada
-    if 1 <= numero_tabla <= len(tablas):
-        tabla_seleccionada = tablas[numero_tabla - 1]
-    else:
-        print("Número de tabla no válido.")
-        return
-    imprimirTabla(cursor, tabla_seleccionada)
-    # Obtener información sobre las columnas de la tabla
-    cursor.execute(f"DESCRIBE {tabla_seleccionada}")
-    columnas_info = cursor.fetchall()
-
-    sentencia=f"DELETE from {tabla_seleccionada} WHERE "
-    for PK in ObtenerPK(cursor,tabla_seleccionada):
-        valor=int(input(f"Ingrese el valor de {PK}: "))
-        if ObtenerPK(cursor,tabla_seleccionada).index(PK)==len(ObtenerPK(cursor,tabla_seleccionada))-1:
-            sentencia+=f"{PK}={valor}"
+        if 1 <= numero_tabla <= len(tablas):
+            tabla_seleccionada = tablas[numero_tabla - 1]
         else:
-            sentencia+=f"{PK}={valor} and "
-    cursor.execute(sentencia)
-    print("Registro borrado!")
+            print("Número de tabla no válido.")
+            return 
+        imprimirTabla(cursor, tabla_seleccionada)
+    # Obtener información sobre las columnas de la tabla
+        cursor.execute(f"DESCRIBE {tabla_seleccionada}")
+        columnas_info = cursor.fetchall()
 
-    # if tabla_seleccionada=="billete":
-    #     idBillete=int(input("Ingrese el idBillete: "))
-    #     idSorteo=int(input("Ingrese el idSorteo: "))
-    #     idCategoria=int(input("Ingrese el idCategoria: "))
-    #     cursor.execute(f"DELETE from {tabla_seleccionada} WHERE idBillete={idBillete} and idSorteo={idSorteo} and idCategoria={idCategoria}")
-   
-    # elif tabla_seleccionada=="categoria":
-    #     idCategoria=int(input("Ingrese el idCategoria: "))
-    #     cursor.execute(f"DELETE from {tabla_seleccionada} where idCategoria={idCategoria}")
+        sentencia=f"DELETE from {tabla_seleccionada} WHERE "
+        for PK in ObtenerPK(cursor,tabla_seleccionada):
+            valor=int(input(f"Ingrese el valor de {PK}: "))
+            if ObtenerPK(cursor,tabla_seleccionada).index(PK)==len(ObtenerPK(cursor,tabla_seleccionada))-1:
+                sentencia+=f"{PK}={valor}"
+            else:
+                sentencia+=f"{PK}={valor} and "
+        cursor.execute(sentencia)
+        print("Registro borrado!")
+    except Exception as e:
+        print(f"Error al borrar, intente de nuevo {e}")
 
-
-    # elif tabla_seleccionada=="cuentavirtual":
-    #      cedula=int(input("Ingrese la cedula: "))
-    #      cursor.execute(f"DELETE from {tabla_seleccionada} where cedula={cedula}")
-
-
-    # elif tabla_seleccionada=="detallepremio":
-    #     idPremio=int(input("Ingrese el idPremio: "))
-    #     idCategoria=int(input("Ingrese el idCategoria: "))
-    #     cursor.execute(f"DELETE from {tabla_seleccionada} WHERE idPremio={idPremio} and idCategoria={idCategoria}")
-
-
-    # elif tabla_seleccionada=="ganador":
-    #     cedula=int(input("Ingrese la cedula: "))
-    #     idBillete=int(input("Ingrese el idBillete: "))
-    #     cursor.execute(f"DELETE from {tabla_seleccionada} WHERE cedula={cedula} and idBillete={idBillete}")
-
-
-    # elif tabla_seleccionada=="loteria":
-    #     idCategoria=int(input("Ingrese el idCategoria: "))
-    #     cursor.execute(f"DELETE from {tabla_seleccionada} where idCategoria={idCategoria}")
-   
-    # elif tabla_seleccionada=="pozo":
-    #     idCategoria=int(input("Ingrese el idCategoria: "))
-    #     cursor.execute(f"DELETE from {tabla_seleccionada} where idCategoria={idCategoria}")
-
-
-    # elif tabla_seleccionada=="premio":
-    #     idPremio=int(input("Ingrese el idPremio: "))
-    #     cursor.execute(f"DELETE from {tabla_seleccionada} WHERE idPremio={idPremio}")
-
-
-    # elif tabla_seleccionada=="sorteo":
-    #     idSorteo=int(input("Ingrese el idSorteo: "))
-    #     cursor.execute(f"DELETE from {tabla_seleccionada} WHERE idSorteo={idSorteo}")
-
-
-    # elif tabla_seleccionada=="sucursal":
-    #     idSucursal=int(input("Ingrese el idSucursal: "))
 
 def ObtenerPK(cursor,tabla):
         try:

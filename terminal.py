@@ -206,6 +206,45 @@ def editarRegistro(cursor):
     except sql.Error as err:
         print(f"Error al editar el registro: {err}")
 
+def EliminarRegistro(cursor):
+    try: 
+    # Pedir al usuario que seleccione una tabla
+        numero_tabla = int(input("Ingrese el número de la tabla en la que desea borrar un registro: "))
+
+    # Obtener el nombre de la tabla seleccionada
+        if 1 <= numero_tabla <= len(tablas):
+            tabla_seleccionada = tablas[numero_tabla - 1]
+        else:
+            print("Número de tabla no válido.")
+            return 
+        imprimirTabla(cursor, tabla_seleccionada)
+    # Obtener información sobre las columnas de la tabla
+        cursor.execute(f"DESCRIBE {tabla_seleccionada}")
+        columnas_info = cursor.fetchall()
+
+        sentencia=f"DELETE from {tabla_seleccionada} WHERE "
+        for PK in ObtenerPK(cursor,tabla_seleccionada):
+            valor=int(input(f"Ingrese el valor de {PK}: "))
+            if ObtenerPK(cursor,tabla_seleccionada).index(PK)==len(ObtenerPK(cursor,tabla_seleccionada))-1:
+                sentencia+=f"{PK}={valor}"
+            else:
+                sentencia+=f"{PK}={valor} and "
+        cursor.execute(sentencia)
+        print("Registro borrado!")
+    except Exception as e:
+        print(f"Error al borrar, intente de nuevo {e}")
+
+
+def ObtenerPK(cursor,tabla):
+        try:
+        # Obtiene la información sobre la clave primaria de la tabla
+            cursor.execute(f"SHOW KEYS FROM {tabla} WHERE Key_name = 'PRIMARY'")
+            columnas_clave_primaria = [columna[4] for columna in cursor.fetchall()]
+            return columnas_clave_primaria
+        
+        except Exception as e:
+            print(f"Error al obtener las columnas de la clave primaria: {e}")
+
 # OPCIONES -------------------------------------------------------------
 opciones = list("12345")
 opcion = ""
@@ -223,7 +262,7 @@ Opciones:
         case "1":
             anadirRegistro(cursor)
         case "2":
-            consultaRegistro(cursor)
+            EliminarRegistro(cursor)
         case "3":
             editarRegistro(cursor)
         case "4":
