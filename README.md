@@ -1,20 +1,20 @@
-# Database Management Script README
+# README del Script de Gestión de Base de Datos
 
-## Overview
+## Resumen
 
-This Python script provides a command-line interface for managing records in a MySQL database hosted on Azure. The script enables users to perform various operations such as adding, deleting, and editing records, as well as querying data. It uses the `pandas` library for tabular display and the `mysql-connector` library for database connectivity.
+Este script en Python proporciona una interfaz de línea de comandos para gestionar registros en una base de datos MySQL alojada en Azure. El script permite a los usuarios realizar diversas operaciones, como agregar, eliminar y editar registros, así como realizar consultas de datos. Utiliza la biblioteca `pandas` para la visualización tabular y la biblioteca `mysql-connector` para la conexión a la base de datos.
 
-## Prerequisites
+## Requisitos previos
 
-Before running the script, ensure you have the following installed:
+Antes de ejecutar el script, asegúrate de tener lo siguiente instalado:
 
-- Python (version 3.x)
-- pandas library (`pip install pandas`)
-- mysql-connector library (`pip install mysql-connector-python`)
+- Python (versión 3.x)
+- Biblioteca pandas (`pip install pandas`)
+- Biblioteca mysql-connector (`pip install mysql-connector-python`)
 
-## Configuration
+## Configuración
 
-Update the database connection details in the script:
+Actualiza los detalles de conexión a la base de datos en el script:
 
 ```python
 conn = sql.connect(
@@ -26,45 +26,45 @@ conn = sql.connect(
 )
 ```
 
-## Usage
+## Uso
 
-1. Run the script in a Python environment:
+1. Ejecuta el script en un entorno de Python:
 
    ```bash
    python script.py
    ```
 
-2. The script will display the available tables in the connected database.
+2. El script mostrará las tablas disponibles en la base de datos conectada.
 
-3. Choose an option from the menu (1 to 5) to perform the desired operation:
+3. Elige una opción del menú (1 al 5) para realizar la operación deseada:
 
-   - **Option 1: Add Record**
-     - Allows users to add a new record to a selected table.
+   - **Opción 1: Agregar Registro**
+     - Permite a los usuarios agregar un nuevo registro a una tabla seleccionada.
 
-   - **Option 2: Delete Record**
-     - Enables users to delete a record from a selected table. The script prompts for the values of the primary key columns.
+   - **Opción 2: Eliminar Registro**
+     - Permite a los usuarios eliminar un registro de una tabla seleccionada. El script solicita los valores de las columnas clave primaria.
 
-   - **Option 3: Edit Record**
-     - Lets users edit an existing record in a selected table. Users are prompted to enter new values for each column.
+   - **Opción 3: Editar Registro**
+     - Permite a los usuarios editar un registro existente en una tabla seleccionada. Se solicita a los usuarios que ingresen nuevos valores para cada columna.
 
-   - **Option 4: Query Record**
-     - Performs a simple query on a selected table based on a provided primary key value.
+   - **Opción 4: Consultar Registro**
+     - Realiza una consulta simple en una tabla seleccionada basada en un valor proporcionado de la clave primaria.
 
-   - **Option 5: Exit**
-     - Terminates the script.
+   - **Opción 5: Salir**
+     - Termina el script.
 
-## Additional Information
+## Información Adicional
 
-- The script uses exception handling to address errors during database operations.
+- El script utiliza manejo de excepciones para abordar errores durante las operaciones en la base de datos.
 
-- The `pandas` library is employed to display table content in a tabular format.
+- Se emplea la biblioteca `pandas` para mostrar el contenido de la tabla en formato tabular.
 
-- The script ensures proper closure of the database cursor.
+- El script asegura el cierre adecuado del cursor de la base de datos.
 
-## Note
+## Nota
 
-- Make sure to back up your database before performing operations that modify data.
+- Asegúrate de hacer una copia de seguridad de tu base de datos antes de realizar operaciones que modifiquen datos.
 
-- Review and update the script according to your database schema and requirements.
+- Revisa y actualiza el script según el esquema de tu base de datos y tus requisitos.
 
-Feel free to contact the script author for any questions or issues.
+No dudes en contactar al autor del script para cualquier pregunta o problema.
