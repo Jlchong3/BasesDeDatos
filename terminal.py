@@ -149,11 +149,7 @@ def consultaRegistro(cursor):
 #MOSTRAR TABLAS DE LA BASE ---------------------------------------------------
 cursor.execute("SHOW TABLES")
 tablas = [tabla[0] for tabla in cursor]
-print("\n Bienvenidos a la Base de Datos de la Loteria Nacional \n Tablas disponibles:")
-
-for i, tabla in enumerate(tablas, start=1):
-    print(f"{i}. {tabla}")
-
+print("\nBienvenidos a la Base de Datos de la Loteria Nacional")
 
 def editarRegistro(cursor):
     # Pedir al usuario que seleccione una tabla
@@ -251,9 +247,16 @@ def ObtenerPK(cursor,tabla):
 # OPCIONES -------------------------------------------------------------
 opciones = list("12345")
 opcion = ""
-while opcion != "5":
+while opcion != "5": 
+    print("\nTablas disponibles:")
+    for i, tabla in enumerate(tablas, start=1):
+        print("{}. {:14}".format(i,tabla), end = "")
+        if i < 10:
+            print(" ",end = "")
+        if i % 4 == 0:
+            print()
     print('''
-Opciones:
+\nOpciones:
   1. Añadir registro
   2. Borrar registro
   3. Editar registro
