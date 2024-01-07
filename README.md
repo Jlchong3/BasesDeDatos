@@ -1,4 +1,4 @@
-# README del Script de Gestión de Base de Datos
+# Loteria Nacional Base de Datos
 
 ## Resumen
 
