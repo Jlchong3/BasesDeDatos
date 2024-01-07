@@ -31,7 +31,7 @@ conn = sql.connect(
 1. Ejecuta el script en un entorno de Python:
 
    ```bash
-   python script.py
+   python terminal.py
    ```
 
 2. El script mostrará las tablas disponibles en la base de datos conectada.
