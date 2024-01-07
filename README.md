@@ -61,10 +61,4 @@ conn = sql.connect(
 
 - El script asegura el cierre adecuado del cursor de la base de datos.
 
-## Nota
-
-- Asegúrate de hacer una copia de seguridad de tu base de datos antes de realizar operaciones que modifiquen datos.
-
-- Revisa y actualiza el script según el esquema de tu base de datos y tus requisitos.
-
-No dudes en contactar al autor del script para cualquier pregunta o problema.
+Esta aplicacion aun esta en prototipo y pronto se la implementara como pagina web
