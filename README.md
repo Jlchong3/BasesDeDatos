@@ -1,64 +1,101 @@
-# Loteria Nacional Base de Datos
+# Aplicación web Dash con MySQL - CRUD
 
-## Resumen
+Este proyecto demuestra una aplicación web simple de CRUD (Crear, Leer, Actualizar, Eliminar) utilizando Dash, un marco web de Python, y MySQL como base de datos en el backend. La aplicación permite a los usuarios realizar varias operaciones en tablas dentro de la base de datos 'loterianacional'.
 
-Este script en Python proporciona una interfaz de línea de comandos para gestionar registros en una base de datos MySQL alojada en Azure. El script permite a los usuarios realizar diversas operaciones, como agregar, eliminar y editar registros, así como realizar consultas de datos. Utiliza la biblioteca `pandas` para la visualización tabular y la biblioteca `mysql-connector` para la conexión a la base de datos.
+## Tabla de Contenidos
 
-## Requisitos previos
-
-Antes de ejecutar el script, asegúrate de tener lo siguiente instalado:
-
-- Python (versión 3.x)
-- Biblioteca pandas (`pip install pandas`)
-- Biblioteca mysql-connector (`pip install mysql-connector-python`)
+- [Configuración](#configuración)
+- [Estructura del Proyecto](#estructura-del-proyecto)
+- [Características](#características)
+- [Uso](#uso)
+- [Dependencias](#dependencias)
+- [Contribuir](#contribuir)
+- [Licencia](#licencia)
 
 ## Configuración
 
-Actualiza los detalles de conexión a la base de datos en el script:
+1. Clonar el repositorio:
 
-```python
-conn = sql.connect(
-    host = "basesloteria.mysql.database.azure.com",
-    user = "administrador",
-    password = "@basesloteriaN",
-    database = "loterianacional",
-    autocommit=True
-)
-```
+   ```bash
+   git clone https://github.com/Jlchong3/BasesDeDatos
+   cd BasesDeDatos
+   ```
+
+2. Instalar las dependencias necesarias:
+
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. Configurar los detalles de conexión de MySQL:
+
+   Actualiza la función `create_connection` en `app.py` con los detalles de tu servidor MySQL:
+
+   ```python
+   conexion = create_connection(
+       "basesloteria.mysql.database.azure.com",
+       "tu_usuario_mysql",
+       "tu_contraseña_mysql",
+       "loterianacional",
+       3306
+   )
+   ```
+
+4. Ejecutar la aplicación:
+
+   ```bash
+   python index.py
+   ```
+
+   Visita [http://127.0.0.1:8050/](http://127.0.0.1:8050/) en tu navegador para acceder a la aplicación web.
+
+## Estructura del Proyecto
+
+El proyecto está organizado de la siguiente manera:
+
+- `app.py`: Contiene la configuración principal de la aplicación Dash, funciones de conexión a la base de datos y funciones de recuperación de datos.
+- `index.py`: Inicializa la aplicación Dash y define el diseño principal con la navegación.
+- `pages/`: Directorio que contiene módulos separados para cada operación de CRUD (crear, leer, actualizar, eliminar).
+- `assets/`: Directorio para almacenar activos estáticos, como imágenes o hojas de estilo.
+
+## Características
+
+1. **Navegación:**
+   - La aplicación proporciona una barra de navegación con opciones para crear, leer, actualizar y eliminar registros.
+
+2. **Operaciones de CRUD:**
+   - Crear: Los usuarios pueden agregar nuevos registros a la base de datos.
+   - Leer: Los usuarios pueden ver los datos de las tablas seleccionadas y aplicar filtros (cláusulas WHERE y ORDER BY).
+   - Actualizar: Los usuarios pueden modificar registros existentes en la base de datos.
+   - Eliminar: Los usuarios pueden eliminar registros de la base de datos.
+
+3. **Tablas Dinámicas:**
+   - La aplicación muestra dinámicamente tablas según la selección e input del usuario.
 
 ## Uso
 
-1. Ejecuta el script en un entorno de Python:
+1. **Crear:**
+   - Navega a la página "Crear" para agregar nuevos registros a la tabla seleccionada.
 
-   ```bash
-   python terminal.py
-   ```
+2. **Leer:**
+   - Navega a la página "Consultar" para ver datos de la tabla seleccionada. Aplica filtros utilizando cláusulas WHERE y ORDER BY.
 
-2. El script mostrará las tablas disponibles en la base de datos conectada.
+3. **Actualizar:**
+   - Navega a la página "Actualizar" para modificar registros existentes en la tabla seleccionada.
 
-3. Elige una opción del menú (1 al 5) para realizar la operación deseada:
+4. **Eliminar:**
+   - Navega a la página "Eliminar" para eliminar registros de la tabla seleccionada.
 
-   - **Opción 1: Agregar Registro**
-     - Permite a los usuarios agregar un nuevo registro a una tabla seleccionada.
+## Dependencias
 
-   - **Opción 2: Eliminar Registro**
-     - Permite a los usuarios eliminar un registro de una tabla seleccionada. El script solicita los valores de las columnas clave primaria.
+- Dash: Marco web para construir aplicaciones web analíticas.
+- Dash Bootstrap Components: Componentes para construir aplicaciones Dash con estilo Bootstrap.
+- MySQL Connector: Controlador de Python para MySQL.
 
-   - **Opción 3: Editar Registro**
-     - Permite a los usuarios editar un registro existente en una tabla seleccionada. Se solicita a los usuarios que ingresen nuevos valores para cada columna.
+## Contribuir
 
-   - **Opción 4: Consultar Registro**
-     - Realiza una consulta simple en una tabla seleccionada basada en un valor proporcionado de la clave primaria.
+Siéntete libre de contribuir al proyecto abriendo problemas o enviando solicitudes de extracción. Tu retroalimentación y contribuciones son muy apreciadas.
 
-   - **Opción 5: Salir**
-     - Termina el script.
+## Licencia
 
-## Información Adicional
-
-- El script utiliza manejo de excepciones para abordar errores durante las operaciones en la base de datos.
-
-- Se emplea la biblioteca `pandas` para mostrar el contenido de la tabla en formato tabular.
-
-- El script asegura el cierre adecuado del cursor de la base de datos.
-
-Esta aplicacion aun esta en prototipo y pronto se la implementara como pagina web
+Este proyecto está bajo la Licencia MIT; consulta el archivo [LICENSE](LICENSE) para más detalles.
