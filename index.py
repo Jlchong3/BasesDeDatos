@@ -1,7 +1,9 @@
 from app import server
 from app import app
 from app import cursor
-from pages import crear,consultar,actualizar,eliminar
+from pages import crear,consultar,actualizar,eliminar,home
+import mysql.connector
+from mysql.connector import Error
 
 import pandas as pd
 import dash
@@ -82,11 +84,14 @@ navbar = dbc.Navbar(
 app.layout = html.Div([
     dcc.Location(id='url', refresh=False),
     navbar,
+
     html.Div(id="page-content")
 ])
+
 @app.callback(Output('page-content', 'children'),
-              [Input('url','pathname')])
-def mostrar_pagina(pathname):
+              Input('url', 'pathname'))
+def mostrar_pagina(path):
+    pathname = path
     if pathname == '/crear':
         return crear.layout
     elif pathname == '/eliminar':
@@ -95,10 +100,12 @@ def mostrar_pagina(pathname):
         return actualizar.layout
     elif pathname == '/consultar':
         return consultar.layout
+    else:
+        return home.layout
 
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=False)
 
 cursor.close()
 conexion.close()

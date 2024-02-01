@@ -3,58 +3,62 @@ import dash
 from dash import dcc, html
 from dash.dependencies import Input, Output, State
 import dash_bootstrap_components as dbc
-import mysql.connector
-from mysql.connector import Error
 from app import app
 from app import cursor
+from app import obtener_datos
 
-def obtener_datos(tabla, cursor):
-    if tabla is None:
-        return None
+cursor.execute("SHOW TABLES")
+table_names = [i[0] for i in cursor.fetchall()]
 
-    consulta_sql = f"SELECT * FROM {tabla}"
-    print("Consulta SQL:", consulta_sql)
-    
-    try:
-        cursor.execute(consulta_sql)
-        rows = cursor.fetchall()
-        columns = [i[0] for i in cursor.description]
-        df = pd.DataFrame(rows, columns=columns)
-        return df
-    except mysql.connector.Error as err:
-        print(f"Error durante la ejecución de la consulta: {err}")
-        return None
-
+crear_group = dbc.InputGroup(
+        [
+            dbc.InputGroupText("Values ("),
+            dbc.Input(id='input', type='text', placeholder="ej: 'Paula', 'Jurado', 40.2"),
+            dbc.InputGroupText(")"),
+        ]
+    )
 
 layout = dbc.Container([
     html.Div([
         dcc.Dropdown(
             id='tabla-dropdown',
-            options=[
-                {'label': 'Tabla de Sucursales', 'value': 'sucursal'},
-                {'label': 'Tabla de Ventas', 'value': 'venta'}
-            ],
-            value='sucursal',
+            options=[{'label': f'Tabla de {table}', 'value': table} for table in table_names],
+            value= table_names[0],
             className='form-control',
         ),
-        html.Div(id='tabla-output', className='mt-4'),
         ],
-        style= {'marginTop':'1vh'}
-    )
-])
+        style= {'marginTop':'1vh'}),
+    html.Div(id='tabla', className='mt-4'),
+    html.Div(crear_group),
+    html.Br(),
+    html.Div(dbc.Button("Execute", id='boton', n_clicks=0), style={"display":"flex", "justifyContent":"center"})
+]),
 
-# Actualizar el contenido de la tabla según la selección del usuario
-@app.callback(
-    Output('tabla-output', 'children'),
-    [Input('tabla-dropdown', 'value')]
-)
-def actualizar_tabla(tabla_seleccionada):
+@app.callback(Output('tabla', 'children'),
+              [State('input','value'),
+               Input('tabla-dropdown', 'value'),
+               Input('boton','n_clicks')])
+def crear_tabla(values, tabla, n):
+    dic = {"billete":"Billete","cuentavirtual":"CuentaVirtual"}
+    if(values is not None):
+        if tabla in dic.keys():
+            try:
+                cursor.execute(f"CALL añadirRegistro{dic[tabla]}({values})")
+            except Exception as e:
+                return html.Div(html.P(f"Error en la función actualizar_tabla: {e}", style={"textAlign":"center","color":"red","fontWeight":"bold"}), 
+                                style = {"display":"flex","justifyContent":"center"})
+        else:
+            try:
+                cursor.execute(f"INSERT INTO {tabla} VALUES({values})")
+            except Exception as e:
+                return html.Div(html.P(f"Error en la función actualizar_tabla: {e}", style={"textAlign":"center","color":"red","fontWeight":"bold"}), 
+                            style = {"display":"flex","justifyContent":"center"})   
     try:
-        df = obtener_datos(tabla_seleccionada, cursor)
+        df = obtener_datos(tabla, cursor)
         if df is None:
-            return "Error al obtener datos de la tabla."
+            return html.Div(html.P(f"Error en la función actualizar_tabla", style={"textAlign":"center","color":"red","fontWeight":"bold"}), 
+                            style = {"display":"flex","justifyContent":"center"})
         return html.Table(
-                id='tabla',
                 children=[
                     # Encabezados de columna
                     html.Thead(
@@ -71,5 +75,5 @@ def actualizar_tabla(tabla_seleccionada):
                 )
     except Exception as e:
         print(f"Error en la función actualizar_tabla: {e}")
-        return f"Error en la función actualizar_tabla: {e}"
-
+        return html.Div(html.P(f"Error en la función actualizar_tabla: {e}", style={"textAlign":"center","color":"red","fontWeight":"bold"}), 
+                        style = {"display":"flex","justifyContent":"center"})
