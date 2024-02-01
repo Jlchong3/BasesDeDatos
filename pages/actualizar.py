@@ -67,12 +67,13 @@ def update_tabla(values, id , tabla, n):
                 sets = ""
                 cursor.execute(f"DESCRIBE {tabla}")
                 columns = [column[0] for column in cursor.fetchall()]
-                values = values.split()
-                for column, value in zip(columns,values):
-                    if column == columns[0]:
+                values = values.split(",")
+                for column, value in zip(columns[1:],values):
+                    if column == columns[1]:
                         sets += f"{column} = {value}"
                         continue
                     sets += f",{column} = {value}"
+                print(sets)
                 cursor.execute(f"Update {tabla} SET {sets} WHERE {columns[0]} = {id}")
             except Exception as e:
                 return html.Div(html.P(f"Error en la función actualizar_tabla: {e}", style={"textAlign":"center","color":"red","fontWeight":"bold"}), 
